@@ -7,7 +7,7 @@
 For a clean Termux system, run this single command:
 
 ```bash
-pkg update && pkg upgrade -y && pkg install -y python git && git clone https://github.com/deithblaidd/TGWS-termux-cli && cd TGWS-termux-cli && pip install -e .
+pkg update && pkg upgrade -y && pkg install -y python git rust && export ANDROID_API_LEVEL=$(getprop ro.build.version.sdk) && git clone https://github.com/deithblaidd/TGWS-termux-cli && cd TGWS-termux-cli && pip install -e .
 ```
 
 This will:
@@ -30,7 +30,8 @@ Make sure you have the required packages:
 
 ```bash
 pkg update && pkg upgrade -y
-pkg install -y python git
+pkg install -y python git rust
+export ANDROID_API_LEVEL=$(getprop ro.build.version.sdk)
 ```
 
 ### 2. Install tgws-manager

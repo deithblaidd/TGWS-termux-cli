@@ -6,14 +6,15 @@
 
 **One command (recommended):**
 ```bash
-pkg update && pkg upgrade -y && pkg install -y python git && git clone https://github.com/deithblaidd/TGWS-termux-cli && cd TGWS-termux-cli && pip install -e . && tgws-manager install && tgws-manager start
+pkg update && pkg upgrade -y && pkg install -y python git rust && export ANDROID_API_LEVEL=$(getprop ro.build.version.sdk) && git clone https://github.com/deithblaidd/TGWS-termux-cli && cd TGWS-termux-cli && pip install -e . && tgws-manager install && tgws-manager start
 ```
 
 **Or step-by-step:**
 ```bash
 # 1. Setup dependencies
 pkg update && pkg upgrade -y
-pkg install -y python git
+pkg install -y python git rust
+export ANDROID_API_LEVEL=$(getprop ro.build.version.sdk)
 
 # 2. Install tgws-manager
 git clone https://github.com/deithblaidd/TGWS-termux-cli
