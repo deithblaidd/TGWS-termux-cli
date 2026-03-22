@@ -1,0 +1,111 @@
+services:
+  # Main testing environment
+  tgws-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tgws-manager-test
+    hostname: tgws-manager-test
+    
+    # Interactive terminal
+    stdin_open: true
+    tty: true
+    
+    # Volumes for development
+    volumes:
+      # Mount source code for live development
+      - .:/workspace/tgws-manager:Z
+      
+      # Persistent config (survives container restarts)
+      - tgws_config_storage:/home/testuser/.tgws-manager
+      
+      # Shared test artifacts
+      - ./test-artifacts:/workspace/artifacts:Z
+    
+    # Port mappings (for proxy testing)
+    ports:
+      - "1080:1080"  # Default proxy port
+      - "1081:1081"  # Alt port 1
+      - "1082:1082"  # Alt port 2
+      - "1083:1083"  # Alt port 3
+      - "1084:1084"  # Alt port 4
+      - "1085:1085"  # Alt port 5
+      - "9999:9999"  # Custom test port
+    
+    # Environment
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+      - TZ=UTC
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '1'
+          memory: 512M
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "/scripts/healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    
+    # Network
+    networks:
+      - tgws-network
+    
+    # Restart policy
+    restart: unless-stopped
+
+  # Additional service: Git server (for testing git operations)
+  git-server:
+    image: alpine:latest
+    container_name: tgws-git-server
+    hostname: git-server
+    
+    volumes:
+      - git_repo_storage:/git-repos:Z
+    
+    # Install git and keep container running
+    command: sh -c "apk add --no-cache git && while true; do sleep 3600; done"
+    
+    networks:
+      - tgws-network
+    
+    restart: unless-stopped
+
+  # Monitoring/Logging container
+  logs:
+    image: alpine:latest
+    container_name: tgws-logs
+    
+    volumes:
+      - /var/lib/docker/containers:/containers:ro
+    
+    # Simple log tail
+    command: sh -c "while true; do tail -f /containers/*/*/logs/container.log 2>/dev/null || sleep 1; done"
+    
+    networks:
+      - tgws-network
+    
+    profiles:
+      - debug
+
+volumes:
+  # Storage for manager config (persistent across container restarts)
+  tgws_config_storage:
+    driver: local
+  
+  # Git repository storage for git-server
+  git_repo_storage:
+    driver: local
+
+networks:
+  tgws-network:
+    driver: bridge

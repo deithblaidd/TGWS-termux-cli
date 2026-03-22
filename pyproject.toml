@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=65.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tgws-manager"
+version = "1.0.0"
+description = "Independent CLI tool to manage tg-ws-proxy installations on Termux"
+readme = "README.md"
+requires-python = ">=3.8"
+authors = [{name = "tgws-manager contributors"}]
+license = {text = "MIT"}
+keywords = ["telegram", "proxy", "termux", "tg-ws-proxy", "management", "cli"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: System :: Networking",
+]
+
+dependencies = [
+    "click>=8.0.0",
+    "colorama>=0.4.4",
+    "pydantic>=1.10.0",
+]
+
+[project.scripts]
+tgws-manager = "tgws_manager.cli:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "black>=22.0",
+    "flake8>=4.0",
+]
+
+[tool.setuptools]
+packages = ["tgws_manager"]
+package-dir = {"" = "src"}
+
+[tool.black]
+line-length = 100
