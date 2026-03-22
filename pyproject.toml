@@ -25,16 +25,16 @@ classifiers = [
     "Topic :: System :: Networking",
 ]
 
-[project.urls]
-Repository = "https://github.com/deithblaidd/TGWS-termux-cli"
-Issues = "https://github.com/deithblaidd/TGWS-termux-cli/issues"
-Documentation = "https://github.com/deithblaidd/TGWS-termux-cli/tree/main/docs"
-
 dependencies = [
     "click>=8.0.0",
     "colorama>=0.4.4",
     "pydantic>=1.10.0",
 ]
+
+[project.urls]
+Repository = "https://github.com/deithblaidd/TGWS-termux-cli"
+Issues = "https://github.com/deithblaidd/TGWS-termux-cli/issues"
+Documentation = "https://github.com/deithblaidd/TGWS-termux-cli/tree/main/docs"
 
 [project.scripts]
 tgws-manager = "tgws_manager.cli:main"
