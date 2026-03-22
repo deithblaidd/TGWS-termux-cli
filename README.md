@@ -32,6 +32,12 @@
 
 ## 30-Second Quick Start
 
+**One command on clean Termux:**
+```bash
+pkg update && pkg upgrade -y && pkg install -y python git && git clone https://github.com/deithblaidd/TGWS-termux-cli && cd TGWS-termux-cli && pip install -e . && tgws-manager install && tgws-manager start
+```
+
+**Or step-by-step:**
 ```bash
 # 1. Install tgws-manager
 git clone https://github.com/deithblaidd/TGWS-termux-cli

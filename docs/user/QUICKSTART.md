@@ -4,19 +4,29 @@
 
 ## 30-Second Setup
 
+**One command (recommended):**
 ```bash
-# 1. Install tgws-manager (the management tool)
+pkg update && pkg upgrade -y && pkg install -y python git && git clone https://github.com/deithblaidd/TGWS-termux-cli && cd TGWS-termux-cli && pip install -e . && tgws-manager install && tgws-manager start
+```
+
+**Or step-by-step:**
+```bash
+# 1. Setup dependencies
+pkg update && pkg upgrade -y
+pkg install -y python git
+
+# 2. Install tgws-manager
 git clone https://github.com/deithblaidd/TGWS-termux-cli
 cd TGWS-termux-cli
 pip install -e .
 
-# 2. Install the proxy
+# 3. Install the proxy
 tgws-manager install
 
-# 3. Start it
+# 4. Start it
 tgws-manager start
 
-# 4. Done! Check status
+# 5. Check status
 tgws-manager status
 ```
 

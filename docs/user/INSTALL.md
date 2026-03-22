@@ -2,6 +2,26 @@
 
 **Important**: tgws-manager is a **separate, independent tool** from tg-ws-proxy. It manages tg-ws-proxy as an external dependency that's installed separately.
 
+## One-Command Installation
+
+For a clean Termux system, run this single command:
+
+```bash
+pkg update && pkg upgrade -y && pkg install -y python git && git clone https://github.com/deithblaidd/TGWS-termux-cli && cd TGWS-termux-cli && pip install -e .
+```
+
+This will:
+1. Update Termux package manager
+2. Install Python and Git
+3. Clone the tgws-manager repository
+4. Install tgws-manager as a pip package
+
+After installation, you're ready to use:
+```bash
+tgws-manager install
+tgws-manager start
+```
+
 ## Quick Start on Termux
 
 ### 1. Prerequisites
