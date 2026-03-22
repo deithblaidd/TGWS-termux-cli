@@ -6,8 +6,8 @@
 
 ```bash
 # 1. Install tgws-manager (the management tool)
-git clone https://github.com/[your-username]/tgws-manager
-cd tgws-manager
+git clone https://github.com/deithblaidd/TGWS-termux-cli
+cd TGWS-termux-cli
 pip install -e .
 
 # 2. Install the proxy

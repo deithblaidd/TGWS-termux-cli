@@ -1,4 +1,6 @@
-# tgws-manager Docs
+# tgws-manager Documentation
+
+**GitHub Repository:** [deithblaidd/TGWS-termux-cli](https://github.com/deithblaidd/TGWS-termux-cli)
 
 Independent CLI tool managing tg-ws-proxy — **not part of tg-ws-proxy source code**.
 

@@ -1,5 +1,7 @@
 # tgws-manager
 
+**Repository:** [deithblaidd/TGWS-termux-cli](https://github.com/deithblaidd/TGWS-termux-cli)
+
 **Tgws-manager** is an **independent, separate CLI tool** that manages `tg-ws-proxy` installations on Termux. It is **NOT part of tg-ws-proxy** — it's a standalone tool that controls tg-ws-proxy as an external dependency.
 
 ## Key Concepts
@@ -24,9 +26,9 @@
 ### On Termux
 
 ```bash
-# Method 1: Install from this repository (latest code)
-git clone https://github.com/[your-username]/tgws-manager
-cd tgws-manager
+# Method 1: Install from GitHub (latest code)
+git clone https://github.com/deithblaidd/TGWS-termux-cli
+cd TGWS-termux-cli
 pip install -e .
 
 # Method 2: Install from PyPI (once published)

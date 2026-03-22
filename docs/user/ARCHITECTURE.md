@@ -1,5 +1,7 @@
 # Architecture
 
+**Repository:** https://github.com/deithblaidd/TGWS-termux-cli
+
 **tgws-manager is completely independent from tg-ws-proxy source code.**
 
 ## Two Separate Tools

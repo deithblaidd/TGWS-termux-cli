@@ -15,12 +15,12 @@ pkg install -y python git
 
 ### 2. Install tgws-manager
 
-This tool must be installed as a separate package. Clone and install:
+Clone from GitHub and install:
 
 ```bash
-# Clone tgws-manager (separate repository)
-git clone https://github.com/[your-username]/tgws-manager
-cd tgws-manager
+# Clone the repository
+git clone https://github.com/deithblaidd/TGWS-termux-cli
+cd TGWS-termux-cli
 
 # Install the CLI tool
 pip install -e .
@@ -29,7 +29,7 @@ pip install -e .
 Or install directly from GitHub:
 
 ```bash
-pip install git+https://github.com/[your-username]/tgws-manager.git
+pip install git+https://github.com/deithblaidd/TGWS-termux-cli.git
 ```
 
 ### Important: Two Completely Separate Things
