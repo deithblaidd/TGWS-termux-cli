@@ -1,302 +1,180 @@
-# tgws-manager Usage Guide
-
-## Overview
-
-`tgws-manager` is a CLI tool to manage tg-ws-proxy on Termux. It handles installation, running, stopping, updating, and configuration of your proxy.
+# Usage
 
 ## Command Reference
 
-All available `tgws-manager` commands:
+### Installation
 
-**Installation & Lifecycle:**
-- `tgws-manager install` - Download and setup tg-ws-proxy
-- `tgws-manager install --path PATH` - Install to custom location
-- `tgws-manager install --rebuild` - Force rebuild dependencies
-- `tgws-manager start` - Start the proxy service
-- `tgws-manager stop` - Stop the proxy service
-- `tgws-manager uninstall` - Remove proxy installation (keep config)
-- `tgws-manager uninstall --purge` - Remove everything (config + installation)
+<table>
+  <thead>
+    <tr><th style="white-space:nowrap">Command</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td style="white-space:nowrap"><code>tgws-manager install</code></td><td>Download & setup tg-ws-proxy</td></tr>
+  </tbody>
+</table>
 
-**Status & Information:**
-- `tgws-manager status` - Show proxy status
-- `tgws-manager info` - Display system info and installation details
-- `tgws-manager logs` - Show proxy logs
-- `tgws-manager logs -n 100` - Show last 100 lines
-- `tgws-manager logs -f` - Follow logs live (tail -f)
+**Options:**
 
-**Updates:**
-- `tgws-manager update` - Update tg-ws-proxy code
-- `tgws-manager update --rebuild` - Update and rebuild dependencies
-- `tgws-manager self-update` - Update tgws-manager tool itself
+<table>
+  <thead>
+    <tr><th style="white-space:nowrap">Flag</th><th>Default</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td style="white-space:nowrap"><code>--path PATH</code></td><td><code>~/.local/tg-ws-proxy</code></td><td>Install to custom location instead of default</td></tr>
+    <tr><td style="white-space:nowrap"><code>--rebuild</code></td><td><code>false</code></td><td>Force rebuild dependencies even if they're cached</td></tr>
+  </tbody>
+</table>
 
-**Configuration:**
-- `tgws-manager config --show` - Display all settings
-- `tgws-manager config --get SETTING` - Get specific setting
-- `tgws-manager config --set SETTING VALUE` - Change setting
-
-**Advanced Start Options:**
-- `tgws-manager start --port PORT` - Listen on specific port (default: 1080)
-- `tgws-manager start --host HOST` - Bind to host (default: 127.0.0.1)
-- `tgws-manager start --dc-ip IP` - Set data center IP
-- `tgws-manager start -v` - Enable verbose logging
-
-**Help:**
-- `tgws-manager --help` - Show all commands
-- `tgws-manager COMMAND --help` - Show command help
-
-## Basic Commands
-
-### Initialize Installation
-
+**Example:**
 ```bash
-tgws-manager install
+tgws-manager install --path /custom/location --rebuild
 ```
 
-Downloads and sets up tg-ws-proxy to `~/.local/tg-ws-proxy/`. Only needs to be run once.
+### Start/Stop
 
-### Start the Proxy
+<table>
+  <thead>
+    <tr><th style="white-space:nowrap">Command</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td style="white-space:nowrap"><code>tgws-manager start</code></td><td>Start proxy (default port 1080, localhost)</td></tr>
+    <tr><td style="white-space:nowrap"><code>tgws-manager stop</code></td><td>Stop running proxy</td></tr>
+  </tbody>
+</table>
 
+**Options:**
+
+<table>
+  <thead>
+    <tr><th style="white-space:nowrap">Flag</th><th>Default</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td style="white-space:nowrap"><code>--port PORT</code></td><td><code>1080</code></td><td>Listen on specific port instead of default</td></tr>
+    <tr><td style="white-space:nowrap"><code>--host HOST</code></td><td><code>127.0.0.1</code></td><td>Bind to specific host (use <code>0.0.0.0</code> for all interfaces)</td></tr>
+    <tr><td style="white-space:nowrap"><code>--dc-ip IP</code></td><td><em>none</em></td><td>Set custom data center IP address</td></tr>
+    <tr><td style="white-space:nowrap"><code>-v</code></td><td><code>false</code></td><td>Enable verbose logging to see detailed output</td></tr>
+  </tbody>
+</table>
+
+**Example:**
 ```bash
-# Simple start
-tgws-manager start
-
-# With options
-tgws-manager start --port 1080 --host 0.0.0.0
+tgws-manager start --port 9999 --host 0.0.0.0 -v
+tgws-manager start --dc-ip 149.154.167.220 --port 1081
 ```
 
-The proxy will run in the background. Check status with:
+### Status & Logs
 
+<table>
+  <thead>
+    <tr><th style="white-space:nowrap">Command</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td style="white-space:nowrap"><code>tgws-manager status</code></td><td>Show if proxy is running and connection info</td></tr>
+    <tr><td style="white-space:nowrap"><code>tgws-manager logs</code></td><td>Show proxy logs (last 50 lines by default)</td></tr>
+  </tbody>
+</table>
+
+**Options:**
+
+<table>
+  <thead>
+    <tr><th style="white-space:nowrap">Flag</th><th>Default</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td style="white-space:nowrap"><code>-n N</code></td><td><code>50</code></td><td>Show last N lines of logs instead of 50</td></tr>
+    <tr><td style="white-space:nowrap"><code>-f</code></td><td><code>false</code></td><td>Follow logs live (like <code>tail -f</code>)</td></tr>
+  </tbody>
+</table>
+
+**Example:**
 ```bash
-tgws-manager status
+tgws-manager logs -n 200 -f
 ```
 
-### Stop the Proxy
+### Updates
 
+<table>
+  <thead>
+    <tr><th style="white-space:nowrap">Command</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td style="white-space:nowrap"><code>tgws-manager update</code></td><td>Update tg-ws-proxy code from GitHub</td></tr>
+    <tr><td style="white-space:nowrap"><code>tgws-manager self-update</code></td><td>Update tgws-manager tool itself via pip</td></tr>
+  </tbody>
+</table>
+
+**Options:**
+
+<table>
+  <thead>
+    <tr><th style="white-space:nowrap">Flag</th><th>Default</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td style="white-space:nowrap"><code>--rebuild</code></td><td><code>false</code></td><td>Rebuild dependencies after pulling updates</td></tr>
+  </tbody>
+</table>
+
+**Example:**
 ```bash
-tgws-manager stop
-```
-
-### View Logs
-
-```bash
-# Show last 50 lines
-tgws-manager logs
-
-# Show last 100 lines
-tgws-manager logs -n 100
-
-# Follow logs live (like tail -f)
-tgws-manager logs -f
-```
-
-Press `Ctrl+C` to stop following logs.
-
-### Update Proxy
-
-```bash
-# Just pull latest code from tg-ws-proxy
-tgws-manager update
-
-# Update and rebuild dependencies
 tgws-manager update --rebuild
 ```
 
-### Update tgws-manager Tool Itself
+### Configuration & Management
 
+<table>
+  <thead>
+    <tr><th style="white-space:nowrap">Command</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td style="white-space:nowrap"><code>tgws-manager config</code></td><td>Manage proxy settings and configuration</td></tr>
+    <tr><td style="white-space:nowrap"><code>tgws-manager info</code></td><td>Show system info and installation details</td></tr>
+    <tr><td style="white-space:nowrap"><code>tgws-manager uninstall</code></td><td>Remove proxy installation</td></tr>
+  </tbody>
+</table>
+
+**Options:**
+
+<table>
+  <thead>
+    <tr><th style="white-space:nowrap">Flag</th><th>Default</th><th>Description</th></tr>
+  </thead>
+  <tbody>
+    <tr><td style="white-space:nowrap"><code>--show</code></td><td><code>false</code></td><td>Display all current settings</td></tr>
+    <tr><td style="white-space:nowrap"><code>--get KEY</code></td><td><em>none</em></td><td>Get value of specific setting</td></tr>
+    <tr><td style="white-space:nowrap"><code>--set KEY VALUE</code></td><td><em>none</em></td><td>Change a setting value</td></tr>
+    <tr><td style="white-space:nowrap"><code>--purge</code></td><td><code>false</code></td><td>Remove proxy AND all configuration (default keeps config)</td></tr>
+  </tbody>
+</table>
+
+**Example:**
 ```bash
-# Update the management tool only (not the proxy)
-tgws-manager self-update
-
-# Or manually
-pip install --upgrade tgws-manager
-```
-
-**Important Distinction:**
-- `tgws-manager update` — Updates tg-ws-proxy (the managed tool)
-- `tgws-manager self-update` — Updates tgws-manager (the manager tool)
-
-## Advanced Options
-
-### Start with Custom Settings
-
-```bash
-# Listen on all interfaces
-tgws-manager start --host 0.0.0.0
-
-# Use different port
-tgws-manager start --port 9999
-
-# Set custom data centers
-tgws-manager start --dc-ip 2:149.154.167.220 --dc-ip 4:149.154.167.220
-
-# Enable verbose logging
-tgws-manager start -v
-```
-
-### Configuration Management
-
-```bash
-# Show all settings
 tgws-manager config --show
-
-# Retrieve specific setting
-tgws-manager config --get last_port
-
-# Change a setting
 tgws-manager config --set last_port 9999
-
-# View system info
-tgws-manager info
-```
-
-### Installation Options
-
-```bash
-# Custom installation path
-tgws-manager install --path /path/to/custom/location
-
-# Force rebuild of dependencies
-tgws-manager install --rebuild
-```
-
-### Uninstallation
-
-```bash
-# Keep configuration files
-tgws-manager uninstall
-
-# Remove everything
 tgws-manager uninstall --purge
 ```
 
-## Typical Workflow
+## Configuration
 
-### First time setup
-
-```bash
-# Install tgws-manager
-pip install -e tgws-manager/
-
-# Install tg-ws-proxy
-tgws-manager install
-
-# Start it
-tgws-manager start
-
-# Check if running
-tgws-manager status
-```
-
-### Daily usage
-
-```bash
-# Start proxy
-tgws-manager start
-
-# ... do your work ...
-
-# Stop when done
-tgws-manager stop
-```
-
-### Updating
-
-```bash
-# Stop
-tgws-manager stop
-
-# Update and rebuild
-tgws-manager update --rebuild
-
-# Resume
-tgws-manager start
-```
-
-## Configuration File
-
-Settings are stored in `~/.tgws-manager/config.json`:
+Stored at `~/.tgws-manager/config.json`:
 
 ```json
 {
-  "proxy_path": "/home/user/.local/tg-ws-proxy",
+  "proxy_path": "~/.local/tg-ws-proxy",
   "git_url": "https://github.com/Flowseal/tg-ws-proxy",
   "auto_start": false,
   "last_port": 1080,
-  "last_host": "127.0.0.1",
-  "check_updates": true
+  "last_host": "127.0.0.1"
 }
 ```
 
-You can edit this directly or use `tgws-manager config` commands.
-
-## Environment Variables
-
-Currently no special environment variables, but Termux-specific settings are detected automatically.
-
 ## Troubleshooting
 
-### Proxy won't start
-
-```bash
-# Check status
-tgws-manager status
-
-# View full logs
-tgws-manager logs -n 500
-
-# Try verbose start
-tgws-manager start -v
-```
-
-### Port conflicts
-
-```bash
-# Kill the process manually if needed
-kill $(cat ~/.tgws-manager/proxy.pid)
-
-# Then start on different port
-tgws-manager start --port 9999
-```
-
-### Dependency issues
-
-```bash
-# Reinstall everything
-tgws-manager install --rebuild
-```
-
-### Update fails
-
-Check that you have git and internet connection:
-
-```bash
-pkg install -y git
-tgws-manager update --rebuild
-```
-
-## Tips & Tricks
-
-### Alias for faster access
-
-```bash
-alias proxy-start='tgws-manager start'
-alias proxy-stop='tgws-manager stop'
-alias proxy-logs='tgws-manager logs -f'
-```
-
-### Monitor logs while running
-
-In another terminal:
-
-```bash
-tgws-manager logs -f
-```
-
-### Check what's installed
-
-```bash
-tgws-manager info
-```
+| Problem | Fix |
+|---------|-----|
+| Proxy won't start | `tgws-manager logs -n 500` or `tgws-manager start -v` |
+| Port conflict | `kill $(cat ~/.tgws-manager/proxy.pid)` then use `--port 9999` |
+| Dependency issues | `tgws-manager install --rebuild` |
+| Update fails | `pkg install -y git` then retry |
 
 ### Get help
 

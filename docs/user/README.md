@@ -1,244 +1,106 @@
 # tgws-manager
 
-**Repository:** [deithblaidd/TGWS-termux-cli](https://github.com/deithblaidd/TGWS-termux-cli)
+Independent CLI tool that manages `tg-ws-proxy` on Termux.
 
-**Tgws-manager** is an **independent, separate CLI tool** that manages `tg-ws-proxy` installations on Termux. It is **NOT part of tg-ws-proxy** — it's a standalone tool that controls tg-ws-proxy as an external dependency.
+- **tgws-manager** — management tool (this repo)
+- **tg-ws-proxy** — the actual SOCKS5 proxy ([Flowseal/tg-ws-proxy](https://github.com/Flowseal/tg-ws-proxy))
 
-## Key Concepts
+See [QUICKSTART.md](QUICKSTART.md) to get started.
 
-- **tgws-manager**: The management tool (this repo) — pip-installable package
-- **tg-ws-proxy**: The actual proxy software — managed by tgws-manager
-- **Completely independent**: Can be installed, updated, and removed separately
-
-## Features
-
-- **Install**: Download and setup tg-ws-proxy from GitHub
-- **Update**: Pull latest changes from tg-ws-proxy repo and rebuild
-- **Start/Stop**: Control the proxy service
-- **Status**: Check if proxy is running
-- **Logs**: View real-time logs
-- **Config**: Manage proxy settings
-- **Version Control**: Track installed proxy version
-- **Encapsulated**: Proxy runs independently in ~/.local/tg-ws-proxy/
-
-## Installation
-
-### On Termux
+## Quick Commands
 
 ```bash
-# Method 1: Install from GitHub (latest code)
-git clone https://github.com/deithblaidd/TGWS-termux-cli
-cd TGWS-termux-cli
-pip install -e .
-
-# Method 2: Install from PyPI (once published)
-pip install tgws-manager
+tgws-manager install              # download & setup tg-ws-proxy
+tgws-manager start                # start proxy (default port 1080)
+tgws-manager status               # check if running
+tgws-manager logs -f              # live logs
+tgws-manager stop                 # stop proxy
+tgws-manager update               # update proxy
+tgws-manager config --show        # view config
 ```
 
-### For Testing (Docker)
-
-```bash
-# Quick setup
-make setup
-make shell
-
-# Or using docker-compose directly
-docker-compose up -d
-docker-compose exec tgws-test bash
-
-# See DOCKER-QUICKSTART.md for full testing guide
-```
-
-### Requirements
-
-- Python 3.8+
-- Git
-- pip
-
-## Usage
-
-```bash
-# Install tg-ws-proxy
-tgws-manager install
-
-# Start the proxy
-tgws-manager start --port 1080
-
-# Check status
-tgws-manager status
-
-# View logs
-tgws-manager logs -f
-
-# Update to latest version
-tgws-manager update
-
-# Stop the proxy
-tgws-manager stop
-
-# View all options
-tgws-manager --help
-```
+**Full reference:** [USAGE.md](USAGE.md)
 
 ## Configuration
 
-Settings are stored in `~/.tgws-manager/config.json`:
+Settings stored at `~/.tgws-manager/config.json`:
 
 ```json
 {
-    "proxy_path": "/home/user/.local/tg-ws-proxy",
-    "auto_start": false,
-    "last_port": 1080,
-    "git_url": "https://github.com/Flowseal/tg-ws-proxy"
+  "proxy_path": "~/.local/tg-ws-proxy",
+  "git_url": "https://github.com/Flowseal/tg-ws-proxy",
+  "auto_start": false,
+  "last_port": 1080,
+  "last_host": "127.0.0.1"
 }
 ```
 
-## Commands
-
-### `install`
-Clone tg-ws-proxy and install dependencies.
-
-```bash
-tgws-manager install [--path PATH]
-```
-
-### `start`
-Start the proxy service.
-
-```bash
-tgws-manager start [--port PORT] [--host HOST] [--dc-ip DC_IP]... [--verbose]
-```
-
-### `stop`
-Stop the running proxy.
-
-```bash
-tgws-manager stop
-```
-
-### `status`
-Show proxy status and PID.
-
-```bash
-tgws-manager status
-```
-
-### `logs`
-Display proxy logs.
-
-```bash
-tgws-manager logs [-f] [-n LINES]
-```
-
-Options:
-- `-f, --follow`: Follow log output (tail -f mode)
-- `-n, --lines`: Show last N lines (default: 50)
-
-### `update`
-Pull latest from GitHub and rebuild.
-
-```bash
-tgws-manager update [--rebuild]
-```
-
-### `config`
-Manage settings.
-
-```bash
-tgws-manager config [--set KEY VALUE] [--get KEY] [--show]
-```
-
-### `uninstall`
-Remove the proxy installation.
-
-```bash
-tgws-manager uninstall [--purge]
-```
-
-Options:
-- `--purge`: Also remove configuration files
-
-## File Structure
+## File Locations
 
 ```
-~/.local/tg-ws-proxy/          # Proxy installation
-~/.tgws-manager/               # Manager configuration
-  └── config.json
-  └── proxy.pid
+~/.local/tg-ws-proxy/      # Proxy installation (from GitHub)
+~/.tgws-manager/           # Manager configuration
+  ├── config.json
+  ├── proxy.pid
   └── logs/
       └── proxy.log
 ```
 
-## Troubleshooting
-
-### Cryptography Rust Build Error
-If you see Rust compilation errors during installation, ensure you have:
-```bash
-pkg install -y rust
-```
-
-### Port Already in Use
-```bash
-tgws-manager stop && tgws-manager start --port 1081
-```
-
-### Permission Denied
-Ensure Termux has read/write permissions:
-```bash
-chmod 755 ~/.local/tg-ws-proxy
-chmod 755 ~/.tgws-manager
-```
-
 ## Architecture
 
+Both components are completely independent:
+
 ```
-User's Termux Device
-├── tgws-manager (this tool)          [pip package]
-│   └── Manages
-│       └── ~/.local/tg-ws-proxy/     [independent tg-ws-proxy installation]
-│           └── Runs as separate process
-├── ~/.tgws-manager/                  [manager config & state]
-│   ├── config.json
-│   ├── proxy.pid
-│   └── version.json
-└── ~/.local/tg-ws-proxy/.tgws-manager/ [proxy metadata]
-    └── version.json
+Your Termux Device
+│
+├─ tgws-manager              ✓ Can be removed/updated separately
+│  └─ Manages (git clone + process control)
+│     └─ ~/.local/tg-ws-proxy/   ✓ Can run without manager
+│        └─ Runs as background process
+│
+├─ ~/.tgws-manager/          ← Manager config only
+│  ├── config.json
+│  ├── proxy.pid
+│  └── version.json
+│
+└─ ~/.local/tg-ws-proxy/     ← Proxy installation (independent)
+   ├── proxy/
+   │  └── tg_ws_proxy.py
+   └── .tgws-manager/version.json
 ```
 
-## Separation of Concerns
+**Key point**: Removing tgws-manager or updating it won't affect the proxy installation. They're completely decoupled.
 
-- **tgws-manager** is about managing the lifecycle of a proxy
-- **tg-ws-proxy** is the actual SOCKS5 proxy implementation
-- They can be updated independently
-- Removing tgws-manager doesn't affect tg-ws-proxy
-- Updating tg-ws-proxy doesn't require tgws-manager changes
+## Troubleshooting
 
-## Learn More
+| Problem | Fix |
+|---------|-----|
+| Rust build errors | `pkg install -y rust` |
+| Port already in use | `tgws-manager start --port 9999` |
+| Permission denied | `chmod -R 755 ~/.local/tg-ws-proxy ~/.tgws-manager` |
+| Command not found | `pip install -e .` in tgws-manager directory |
 
-For detailed architecture and design information, see [ARCHITECTURE.md](ARCHITECTURE.md).
+## Testing with Docker
 
-## Testing
-
-tgws-manager includes a complete Docker testing environment for development and testing:
+Quick local testing (requires Docker):
 
 ```bash
-# Quick start (requires Docker & Docker Compose)
-make setup       # Build and start environment
-make shell       # Enter test container
-make test        # Run all automated tests
+make setup       # Build & start
+make shell       # Enter container
+make test        # Run tests
 make clean       # Cleanup
 ```
 
-**See [DOCKER-QUICKSTART.md](DOCKER-QUICKSTART.md)** for step-by-step testing guide.
+See [DOCKER-QUICKSTART.md](DOCKER-QUICKSTART.md) for details.
 
-The Docker environment includes:
-- ✅ Complete Python environment with all dependencies
-- ✅ Git and system utilities
-- ✅ tgws-manager pre-installed
-- ✅ Persistent volumes for testing
-- ✅ Multiple port mapping for testing
-- ✅ Helper scripts and health checks
+## Learn More
+
+- [QUICKSTART.md](QUICKSTART.md) — 30 seconds to running
+- [INSTALL.md](INSTALL.md) — Installation guide
+- [USAGE.md](USAGE.md) — All commands & options
+- [ARCHITECTURE.md](ARCHITECTURE.md) — Design & independence
+- [DOCKER-QUICKSTART.md](DOCKER-QUICKSTART.md) — Docker testing
 
 ## License
 
-MIT - See LICENSE file
+MIT

@@ -1,232 +1,55 @@
-# Installation Guide for tgws-manager
+# Installation
 
-**Important**: tgws-manager is a **separate, independent tool** from tg-ws-proxy. It manages tg-ws-proxy as an external dependency that's installed separately.
+## Requirements
 
-## One-Command Installation
+- Python 3.8+, Git, pip
+- Termux: also install Rust (`pkg install -y rust`)
 
-For a clean Termux system, run this single command:
+## Install tgws-manager
 
 ```bash
-pkg update && pkg upgrade -y && pkg install -y python git rust && export ANDROID_API_LEVEL=$(getprop ro.build.version.sdk) && git clone https://github.com/deithblaidd/TGWS-termux-cli && cd TGWS-termux-cli && pip install -e .
+# From GitHub
+git clone https://github.com/deithblaidd/TGWS-termux-cli
+cd TGWS-termux-cli
+pip install -e .
+
+# Or directly
+pip install git+https://github.com/deithblaidd/TGWS-termux-cli.git
+
+# Once on PyPI
+pip install tgws-manager
 ```
 
-This will:
-1. Update Termux package manager
-2. Install Python and Git
-3. Clone the tgws-manager repository
-4. Install tgws-manager as a pip package
-
-After installation, you're ready to use:
+On Termux, set the API level first:
 ```bash
-tgws-manager install
-tgws-manager start
-```
-
-## Quick Start on Termux
-
-### 1. Prerequisites
-
-Make sure you have the required packages:
-
-```bash
-pkg update && pkg upgrade -y
-pkg install -y python git rust
 export ANDROID_API_LEVEL=$(getprop ro.build.version.sdk)
 ```
 
-### 2. Install tgws-manager
+## Install tg-ws-proxy
 
-Clone from GitHub and install:
-
-```bash
-# Clone the repository
-git clone https://github.com/deithblaidd/TGWS-termux-cli
-cd TGWS-termux-cli
-
-# Install the CLI tool
-pip install -e .
-```
-
-Or install directly from GitHub:
-
-```bash
-pip install git+https://github.com/deithblaidd/TGWS-termux-cli.git
-```
-
-### Important: Two Completely Separate Things
-
-- **tgws-manager** (this package) - Management tool for controlling the proxy
-- **tg-ws-proxy** - The actual proxy software (will be installed automatically when you run `tgws-manager install`)
-
-### 3. First-Time Setup
-
-Once tgws-manager is installed, initialize the proxy:
-
+After tgws-manager is installed, run once:
 ```bash
 tgws-manager install
 ```
 
-This will:
-- Clone tg-ws-proxy repository to `~/.local/tg-ws-proxy/` (separate installation)
-- Install all tg-ws-proxy Python dependencies
-- Create tgws-manager configuration at `~/.tgws-manager/`
+This clones [Flowseal/tg-ws-proxy](https://github.com/Flowseal/tg-ws-proxy) into `~/.local/tg-ws-proxy/` and installs its dependencies.
 
-**Key Point**: The actual proxy (`tg-ws-proxy`) is installed separately in its own location, completely independent from tgws-manager itself.
-
-## Complete Usage Examples
-
-### Start the proxy
+## Uninstall
 
 ```bash
-# Default (port 1080, localhost)
-tgws-manager start
-
-# Custom port
-tgws-manager start --port 1080
-
-# Listen on all interfaces
-tgws-manager start --host 0.0.0.0
-
-# Custom data centers
-tgws-manager start --dc-ip 2:149.154.167.220 --dc-ip 4:149.154.167.220
-
-# Verbose logging
-tgws-manager start -v
-```
-
-### Check status
-
-```bash
-tgws-manager status
-```
-
-### View logs
-
-```bash
-# Last 50 lines
-tgws-manager logs
-
-# Follow in real-time
-tgws-manager logs -f
-
-# Custom number of lines
-tgws-manager logs -n 100
-```
-
-### Update to latest version
-
-```bash
-# Just update code
-tgws-manager update
-
-# Update and rebuild dependencies
-tgws-manager update --rebuild
-```
-
-### Stop the proxy
-
-```bash
-tgws-manager stop
-```
-
-### Manage configuration
-
-```bash
-# Show all settings
-tgws-manager config --show
-
-# Get specific setting
-tgws-manager config --get last_port
-
-# Change setting
-tgws-manager config --set auto_start true
-```
-
-### System information
-
-```bash
-tgws-manager info
-```
-
-### Uninstall
-
-```bash
-# Just remove proxy
-tgws-manager uninstall
-
-# Remove proxy + configuration
-tgws-manager uninstall --purge
+tgws-manager uninstall        # remove proxy only
+tgws-manager uninstall --purge  # remove proxy + config
+pip uninstall tgws-manager    # remove tgws-manager itself
 ```
 
 ## Troubleshooting
 
-### Error: Command not found: tgws-manager
-
-Make sure the installation completed successfully:
-
-```bash
-pip list | grep tgws-manager
-```
-
-If not listed, reinstall:
-
-```bash
-pip install --upgrade e .
-```
-
-### Rust compilation errors during install
-
-If you see errors about Rust:
-
-```bash
-pkg install -y rust
-pip install --upgrade cryptography
-tgws-manager install --rebuild
-```
-
-### Port already in use
-
-```bash
-# Stop running proxy
-tgws-manager stop
-
-# Start on different port
-tgws-manager start --port 1081
-```
-
-### Permission denied
-
-Ensure proper permissions:
-
-```bash
-chmod -R 755 ~/.local/tg-ws-proxy
-chmod -R 755 ~/.tgws-manager
-```
-
-### View detailed error logs
-
-```bash
-# Check if proxy is actually running
-tgws-manager status
-
-# View full logs
-tgws-manager logs -n 200
-
-# Run with verbose mode
-tgws-manager start -v
-```
-
-## Uninstalling tgws-manager
-
-To completely remove tgws-manager:
-
-```bash
-# Uninstall with config
-tgws-manager uninstall --purge
-
-# Or just remove the package
-pip uninstall tgws-manager
-```
+| Problem | Fix |
+|---------|-----|
+| `command not found` | `pip install -e .` |
+| Rust errors | `pkg install -y rust` then retry |
+| Port in use | `tgws-manager start --port 1081` |
+| Permission denied | `chmod -R 755 ~/.local/tg-ws-proxy ~/.tgws-manager` |
 
 ## Advanced: Development Installation
 
@@ -260,4 +83,4 @@ black src/
 
 For issues or feature requests:
 - [tg-ws-proxy issues](https://github.com/Flowseal/tg-ws-proxy/issues)
-- [tgws-manager issues](https://github.com/Flowseal/tg-ws-proxy/issues)
+- [tgws-manager issues](https://github.com/deithblaidd/TGWS-termux-cli/issues)

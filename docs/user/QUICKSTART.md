@@ -1,103 +1,47 @@
-# Quick Start: tgws-manager on Termux
+# Quick Start
 
-**tgws-manager** is a standalone tool that **independently manages** tg-ws-proxy.
+## Setup (one command)
 
-## 30-Second Setup
-
-**One command (recommended):**
 ```bash
 pkg update && pkg upgrade -y && pkg install -y python git rust && export ANDROID_API_LEVEL=$(getprop ro.build.version.sdk) && git clone https://github.com/deithblaidd/TGWS-termux-cli && cd TGWS-termux-cli && pip install -e . && tgws-manager install && tgws-manager start
 ```
 
-**Or step-by-step:**
+## Step-by-step
+
 ```bash
-# 1. Setup dependencies
+# Dependencies
 pkg update && pkg upgrade -y
 pkg install -y python git rust
 export ANDROID_API_LEVEL=$(getprop ro.build.version.sdk)
 
-# 2. Install tgws-manager
+# Install tgws-manager
 git clone https://github.com/deithblaidd/TGWS-termux-cli
-cd TGWS-termux-cli
-pip install -e .
+cd TGWS-termux-cli && pip install -e .
 
-# 3. Install the proxy
+# Install & start proxy
 tgws-manager install
-
-# 4. Start it
 tgws-manager start
-
-# 5. Check status
-tgws-manager status
 ```
 
-## Daily Commands
+## Essential Commands
 
 ```bash
-# Start proxy (runs in background)
-tgws-manager start
-
-# Check if running
-tgws-manager status
-
-# View live logs
-tgws-manager logs -f
-
-# Stop when done
-tgws-manager stop
-
-# Update to latest
-tgws-manager update
-```
-
-## Common Scenarios
-
-### Custom Port
-```bash
-tgws-manager start --port 9999
-```
-
-### Listen on All Interfaces
-```bash
-tgws-manager start --host 0.0.0.0
-```
-
-### Custom Data Centers
-```bash
-tgws-manager start --dc-ip 2:149.154.167.220 --dc-ip 4:149.154.167.220
-```
-
-### Verbose/Debug Mode
-```bash
-tgws-manager start -v
-```
-
-### Check Logs
-```bash
-# Last 50 lines
-tgws-manager logs
-
-# Last 100 lines
-tgws-manager logs -n 100
-
-# Follow live
-tgws-manager logs -f
-```
-
-## File Locations
-
-```
-Config:     ~/.tgws-manager/config.json
-Proxy:      ~/.local/tg-ws-proxy/
-PID file:   ~/.tgws-manager/proxy.pid
+tgws-manager start              # start (port 1080 default)
+tgws-manager start --port 9999  # custom port
+tgws-manager start --host 0.0.0.0  # all interfaces
+tgws-manager status             # check if running
+tgws-manager logs -f            # live logs
+tgws-manager stop               # stop
+tgws-manager update             # update proxy
 ```
 
 ## Troubleshooting
 
-### "Command not found: tgws-manager"
-```bash
-pip install -e .
-```
+| Problem | Fix |
+|---------|-----|
+| `command not found: tgws-manager` | `pip install -e .` |
+| Rust errors during install | `pkg install -y rust` |
+| Port in use | `tgws-manager start --port 9999` |
 
 ### "Port already in use"
 ```bash
@@ -142,8 +86,10 @@ tgws-manager config --help
 
 ---
 
-For detailed documentation, see:
-- **Installation**: `INSTALL.md`
-- **Usage Guide**: `USAGE.md`
-- **Development**: `DEVELOPMENT.md`
-- **Full README**: `README.md`
+## Documentation
+
+- [Installation Guide](INSTALL.md)
+- [Usage Guide](USAGE.md)
+- [Architecture](ARCHITECTURE.md)
+- [Development Guide](../testing/DEVELOPMENT.md)
+- [Docker Testing](DOCKER-QUICKSTART.md)
