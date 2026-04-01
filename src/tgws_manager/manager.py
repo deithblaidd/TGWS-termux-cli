@@ -33,7 +33,7 @@ def _termux_install_deps(proxy_path: Path) -> tuple:
     """
     Install tg-ws-proxy dependencies on Termux/Android.
 
-    On Android, psutil and pillow cannot be built from source by pip.
+    On Android, psutil, pillow, and cryptography cannot be built from source by pip.
     We use Termux's pkg manager for those, then pip for pure-Python deps.
     pystray is intentionally skipped (requires desktop display server).
 
@@ -42,7 +42,7 @@ def _termux_install_deps(proxy_path: Path) -> tuple:
     """
     # Step 1: Install Android-compatible builds via Termux pkg
     print_info("Termux detected - installing native packages via pkg...")
-    pkg_code, _, pkg_err = run_command(["pkg", "install", "-y", "python-psutil", "python-pillow"])
+    pkg_code, _, pkg_err = run_command(["pkg", "install", "-y", "python-psutil", "python-pillow", "python-cryptography"])
     if pkg_code != 0:
         print_warning(f"pkg install failed (continuing): {pkg_err}")
 
