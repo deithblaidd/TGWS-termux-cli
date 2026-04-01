@@ -35,6 +35,8 @@ def _termux_install_deps(proxy_path: Path) -> tuple:
 
     On Android, psutil and pillow cannot be built from source by pip.
     We use Termux's pkg manager for those, then pip for pure-Python deps.
+    cryptography is installed via pip in step 4 (pre-built wheel available
+    for aarch64-linux-android on PyPI, no Rust compilation required).
     pystray is intentionally skipped (requires desktop display server).
 
     Returns:
@@ -64,7 +66,7 @@ def _termux_install_deps(proxy_path: Path) -> tuple:
     # Step 4: Install remaining pure-Python deps that pip can handle on Android
     print_info("Installing pure-Python dependencies...")
     pip_code, pip_out, pip_err = run_command(
-        ["pip", "install", "customtkinter==5.2.2", "pyperclip==1.9.0"]
+        ["pip", "install", "cryptography==46.0.5", "customtkinter==5.2.2", "pyperclip==1.9.0"]
     )
     if pip_code != 0:
         print_warning(f"Some pure-Python deps failed to install: {pip_err}")
