@@ -75,7 +75,6 @@ Your Termux Device
 
 | Problem | Fix |
 |---------|-----|
-| Rust build errors | `pkg install -y rust` |
 | Port already in use | `tgws-manager start --port 9999` |
 | Permission denied | `chmod -R 755 ~/.local/tg-ws-proxy ~/.tgws-manager` |
 | Command not found | `pip install -e .` in tgws-manager directory |

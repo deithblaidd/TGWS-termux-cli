@@ -21,7 +21,7 @@ Both components are installed independently:
 
 **Clean Termux setup (one line):**
 ```bash
-pkg update && pkg upgrade -y && pkg install -y python git rust && export ANDROID_API_LEVEL=$(getprop ro.build.version.sdk) && git clone https://github.com/deithblaidd/TGWS-termux-cli && cd TGWS-termux-cli && pip install -e . && tgws-manager install && tgws-manager start
+pkg update && pkg upgrade -y && pkg install -y python git && git clone https://github.com/deithblaidd/TGWS-termux-cli && cd TGWS-termux-cli && pip install -e . && tgws-manager install && tgws-manager start
 ```
 
 **Or step-by-step:** [QUICKSTART.md](docs/user/QUICKSTART.md)
@@ -78,7 +78,6 @@ See [USAGE.md](docs/user/USAGE.md) for complete reference with all flags and opt
 
 | Problem | Fix |
 |---------|-----|
-| Rust errors | `pkg install -y rust` |
 | Port in use | `tgws-manager start --port 9999` |
 | Permission denied | `chmod -R 755 ~/.local/tg-ws-proxy ~/.tgws-manager` |
 
