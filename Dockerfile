@@ -37,7 +37,7 @@ COPY --chown=testuser:testuser . /workspace/tgws-manager/
 RUN pip install --no-cache-dir --quiet \
     click>=8.0.0 \
     colorama>=0.4.4 \
-    pydantic>=1.10.0 && \
+    "pydantic>=1.10.0,<2.0" && \
     pip install --no-cache-dir -e /workspace/tgws-manager/
 
 # Test script
