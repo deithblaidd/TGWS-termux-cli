@@ -24,6 +24,55 @@ from .utils import (
 )
 
 
+def _is_termux() -> bool:
+    """Detect if running inside Termux on Android."""
+    return os.path.isdir("/data/data/com.termux")
+
+
+def _termux_install_deps(proxy_path: Path) -> tuple:
+    """
+    Install tg-ws-proxy dependencies on Termux/Android.
+
+    On Android, psutil and pillow cannot be built from source by pip.
+    We use Termux's pkg manager for those, then pip for pure-Python deps.
+    pystray is intentionally skipped (requires desktop display server).
+
+    Returns:
+        Tuple of (exit_code, stdout, stderr) from the final pip step.
+    """
+    # Step 1: Install Android-compatible builds via Termux pkg
+    print_info("Termux detected - installing native packages via pkg...")
+    pkg_code, _, pkg_err = run_command(["pkg", "install", "-y", "python-psutil", "python-pillow"])
+    if pkg_code != 0:
+        print_warning(f"pkg install failed (continuing): {pkg_err}")
+
+    # Step 2: Install build backend deps needed for --no-build-isolation editable install
+    print_info("Installing build backend dependencies...")
+    be_code, _, be_err = run_command(["pip", "install", "hatchling", "editables"])
+    if be_code != 0:
+        print_warning(f"Build backend install failed (continuing): {be_err}")
+
+    # Step 3: Install the proxy package itself, skip deps (handled above)
+    print_info("Installing tg-ws-proxy package (no-deps)...")
+    exit_code, stdout, stderr = run_command(
+        ["pip", "install", "--no-build-isolation", "--no-deps", "-e", "."],
+        cwd=str(proxy_path),
+    )
+    if exit_code != 0:
+        return exit_code, stdout, stderr
+
+    # Step 4: Install remaining pure-Python deps that pip can handle on Android
+    print_info("Installing pure-Python dependencies...")
+    pip_code, pip_out, pip_err = run_command(
+        ["pip", "install", "customtkinter==5.2.2", "pyperclip==1.9.0"]
+    )
+    if pip_code != 0:
+        print_warning(f"Some pure-Python deps failed to install: {pip_err}")
+        # Non-fatal: proxy core still works without tray/clipboard deps
+
+    return exit_code, stdout, stderr
+
+
 class ProxyManager:
     """Manages tg-ws-proxy installation and lifecycle"""
 
@@ -103,16 +152,20 @@ class ProxyManager:
         
         if pyproject_file.exists():
             print_info("Installing from pyproject.toml...")
-            exit_code, stdout, stderr = run_command(
-                ["pip", "install", "-e", "."],
-                cwd=str(proxy_path),
-            )
+            if _is_termux():
+                exit_code, stdout, stderr = _termux_install_deps(proxy_path)
+            else:
+                exit_code, stdout, stderr = run_command(
+                    ["pip", "install", "-e", "."],
+                    cwd=str(proxy_path),
+                )
             if exit_code == 0:
                 print_success("Dependencies installed from pyproject.toml")
             else:
                 print_error(f"Failed to install dependencies: {stderr}")
-                print_warning("This might be due to Rust compilation. Try installing rust:")
-                print_warning("pkg install -y rust")
+                if not _is_termux():
+                    print_warning("This might be due to Rust compilation. Try installing rust:")
+                    print_warning("pkg install -y rust")
                 return False
         
         elif req_file.exists():
@@ -365,10 +418,13 @@ class ProxyManager:
         
         if rebuild:
             print_info("Rebuilding dependencies...")
-            exit_code, stdout, stderr = run_command(
-                ["pip", "install", "--upgrade", "-e", "."],
-                cwd=str(proxy_path),
-            )
+            if _is_termux():
+                exit_code, stdout, stderr = _termux_install_deps(proxy_path)
+            else:
+                exit_code, stdout, stderr = run_command(
+                    ["pip", "install", "--upgrade", "-e", "."],
+                    cwd=str(proxy_path),
+                )
             if exit_code != 0:
                 print_error(f"Failed to rebuild: {stderr}")
                 return False

@@ -3,7 +3,6 @@
 ## Requirements
 
 - Python 3.8+, Git, pip
-- Termux: also install Rust (`pkg install -y rust`)
 
 ## Install tgws-manager
 
@@ -20,9 +19,9 @@ pip install git+https://github.com/deithblaidd/TGWS-termux-cli.git
 pip install tgws-manager
 ```
 
-On Termux, set the API level first:
+On Termux, install the base dependencies:
 ```bash
-export ANDROID_API_LEVEL=$(getprop ro.build.version.sdk)
+pkg update && pkg upgrade -y && pkg install -y python git
 ```
 
 ## Install tg-ws-proxy
@@ -47,7 +46,6 @@ pip uninstall tgws-manager    # remove tgws-manager itself
 | Problem | Fix |
 |---------|-----|
 | `command not found` | `pip install -e .` |
-| Rust errors | `pkg install -y rust` then retry |
 | Port in use | `tgws-manager start --port 1081` |
 | Permission denied | `chmod -R 755 ~/.local/tg-ws-proxy ~/.tgws-manager` |
 

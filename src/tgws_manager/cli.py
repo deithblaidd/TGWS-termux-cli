@@ -251,19 +251,28 @@ def info() -> None:
 
 
 @main.command(name="self-update")
-def self_update() -> None:
-    """Update tgws-manager tool itself (not the proxy)"""
-    print_info("Updating tgws-manager...")
-    exit_code, stdout, stderr = run_command(
-        ["pip", "install", "--upgrade", "tgws-manager"],
-        capture_output=True,
-    )
-    
+@click.option("--rebuild", is_flag=True, help="Force reinstall of all dependencies")
+def self_update(rebuild: bool) -> None:
+    """Update tgws-manager tool itself from GitHub (not the proxy)"""
+    repo_url = "git+https://github.com/deithblaidd/TGWS-termux-cli.git"
+    print_info("Updating tgws-manager from GitHub...")
+
+    if not rebuild:
+        print_warning("Note: without --rebuild, pip may use cached packages and skip reinstalling dependencies.")
+        print_info("For a full clean update, run: tgws-manager self-update --rebuild")
+
+    cmd = ["pip", "install", "--upgrade"]
+    if rebuild:
+        cmd += ["--force-reinstall", "--no-cache-dir"]
+    cmd.append(repo_url)
+
+    exit_code, stdout, stderr = run_command(cmd)
+
     if exit_code != 0:
         print_error(f"Failed to update tgws-manager: {stderr}")
-        print_info("Try manual update: pip install --upgrade tgws-manager")
+        print_info(f"Try manual update: pip install --upgrade {repo_url}")
         raise SystemExit(1)
-    
+
     print_success("tgws-manager updated successfully!")
     print_info("Run 'tgws-manager --version' to verify")
 

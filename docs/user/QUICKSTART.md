@@ -3,7 +3,7 @@
 ## Setup (one command)
 
 ```bash
-pkg update && pkg upgrade -y && pkg install -y python git rust && export ANDROID_API_LEVEL=$(getprop ro.build.version.sdk) && git clone https://github.com/deithblaidd/TGWS-termux-cli && cd TGWS-termux-cli && pip install -e . && tgws-manager install && tgws-manager start
+pkg update && pkg upgrade -y && pkg install -y python git && git clone https://github.com/deithblaidd/TGWS-termux-cli && cd TGWS-termux-cli && pip install -e . && tgws-manager install && tgws-manager start
 ```
 
 ## Step-by-step
@@ -11,8 +11,7 @@ pkg update && pkg upgrade -y && pkg install -y python git rust && export ANDROID
 ```bash
 # Dependencies
 pkg update && pkg upgrade -y
-pkg install -y python git rust
-export ANDROID_API_LEVEL=$(getprop ro.build.version.sdk)
+pkg install -y python git
 
 # Install tgws-manager
 git clone https://github.com/deithblaidd/TGWS-termux-cli
@@ -40,18 +39,11 @@ tgws-manager update             # update proxy
 | Problem | Fix |
 |---------|-----|
 | `command not found: tgws-manager` | `pip install -e .` |
-| Rust errors during install | `pkg install -y rust` |
 | Port in use | `tgws-manager start --port 9999` |
 
 ### "Port already in use"
 ```bash
 tgws-manager start --port 1081
-```
-
-### Rust compilation error
-```bash
-pkg install -y rust
-tgws-manager install --rebuild
 ```
 
 ## What's Happening?
